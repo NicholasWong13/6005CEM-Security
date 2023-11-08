@@ -1,6 +1,6 @@
-# 5010CEM Enterprise-Project 
+# 6005CEM Security 
 # Studio C Hair & Beauty Salon
-# Group 5
+# Group 10
 
 Members:
 1. Nicholas Wong
