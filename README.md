@@ -1,9 +1,9 @@
-# 5010CEM Enterprise-Project 
+# 6005CEM Security - Secure Application Development
 # Studio C Hair & Beauty Salon
-# Group 5
+# Group 10
 
 Members:
-1. Nicholas Wong
+1. Nicholas Wong Kai Xin
 2. John Luke Joeshua
 3. Ranveer Singh Balleh
 
