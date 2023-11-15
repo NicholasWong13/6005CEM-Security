@@ -224,8 +224,6 @@ a:hover{
   transform: scale(1.02);
 }
 
-
-/*About Page*/
 *, *:before, *:after {
   box-sizing: inherit;
 }
@@ -240,6 +238,12 @@ a:hover{
 .card {
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
   margin: 8px;
+  text-align: center;
+}
+
+.card img {
+  width: 100%; 
+  height: auto; 
 }
 
 .about-section {
@@ -285,7 +289,6 @@ a:hover{
     display: block;
   }
 }
-
 
 /*Product Page*/
 

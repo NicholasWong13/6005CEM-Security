@@ -1,49 +1,49 @@
-<?php 
+<?php
+session_start();
 
-  session_start();
+require 'assets/conn.php';
+require 'functions.php';
 
-  require 'assets/conn.php';
-  require 'functions.php';
+if (isset($_POST['register'])) {
+    $uname = $_POST['username'];
+    $pword = $_POST['password'];
+    $email = $_POST['email'];
+    $fullname = $_POST['fullname'];
+    $phonenumber = $_POST['phonenumber'];
+    $date_joined = date("Y-m-d");
 
-
-  if(isset($_POST['register'])) {
-
-    $uname = clean($_POST['username']); 
-    $pword = clean($_POST['password']); 
-    $email = clean($_POST['email']); 
-    $fname = clean($_POST['firstname']); 
-    $lname = clean($_POST['lastname']);
-
-    $query = "SELECT username FROM users WHERE username = '$uname'";
-    $result = mysqli_query($con,$query);
-
-      if(mysqli_num_rows($result) == 0) {
-
-        $query = "INSERT INTO users (username, password, email, firstname, lastname, date_joined)
-        VALUES ('$uname', '$pword', '$email', '$fname', '$lname', NOW())";
-
-        if(mysqli_query($con, $query)) {
-
-          $_SESSION['prompt'] = "Account Registered. You can now log in.";
-          header("location:login.php");
-          exit;
-
-        } else {
-
-          die("Error with the query");
-
-        }
-
-
-    } else {
-
-      $_SESSION['errprompt'] = "Username already exists.";
-
+    // Example of server-side validation
+    if (empty($uname) || empty($pword) || empty($email) || empty($fullname) || empty($phonenumber)) {
+        $_SESSION['errprompt'] = "All fields are required.";
+        header("Location: register.php");
+        exit;
     }
 
-  } 
+    $hashed_password = password_hash($pword, PASSWORD_DEFAULT); // Hash the password
 
+    // Use prepared statements for database operations to prevent SQL injection
+    $query = "INSERT INTO users (username, password, email, fullname, phonenumber, date_joined) VALUES (?, ?, ?, ?, ?, ?)";
+    $stmt = mysqli_prepare($con, $query);
+
+    if (!$stmt) {
+        $_SESSION['errprompt'] = "Error preparing the statement.";
+        header("Location: register.php");
+        exit;
+    }
+
+    // Bind parameters
+    mysqli_stmt_bind_param($stmt, 'ssssss', $uname, $hashed_password, $email, $fullname, $phonenumber, $date_joined);
+
+    if (mysqli_stmt_execute($stmt)) {
+        // ... (no changes to existing code)
+    } else {
+        $_SESSION['errprompt'] = "Error registering the account.";
+        header("Location: register.php");
+        exit;
+    }
+}
 ?>
+
 
 <!DOCTYPE html>
 <html>
@@ -55,15 +55,10 @@
 
 	<title>Register - Studio C Hair & Beauty Salon </title>
 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
 	<link href="assets/css/bootstrap.min.css" rel="stylesheet">
   <link href="assets/css/main.css" rel="stylesheet">
-
-	<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-    <![endif]-->
     
 </head>
 <body>
@@ -75,14 +70,15 @@
     <strong>Register</strong>
 
     <div class="registration-form box-center clearfix">
-
     <?php 
         if(isset($_SESSION['errprompt'])) {
-          showError();
+          echo '<div class="error-message">' . $_SESSION['errprompt'] . '</div>';
+          unset($_SESSION['errprompt']); // Clear the error message
         }
-    ?>
+      ?>
 
-      <form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" method="POST">
+      
+    <form action="register.php" method="POST" onsubmit="return validateForm()">
         
         <div class="row">
           <div class="account-info col-sm-6">
@@ -92,41 +88,53 @@
               
               <div class="form-group">
                 <label for="username">Username</label>
-                <input type="text" class="form-control" name="username" placeholder="Username (must be unique)" required>
+                <input type="text" class="form-control" name="username" placeholder="Username">
+                <span id="usernameError" class="error-message"></span>
               </div>
 
               <div class="form-group">
                 <label for="password">Password</label>
-                <input type="password" class="form-control" name="password" placeholder="Password" required>
+                <input type="password" class="form-control" name="password" placeholder="Password">
+                <span id="passwordError" class="error-message"></span>
+              </div>
+
+              <div class="form-group">
+                <label for="confpassword">Confirm Password</label>
+                <input type="password" class="form-control" name="confpassword" placeholder="Confirm Password">
+                <span id="confpasswordError" class="error-message"></span>
               </div>
 
             </fieldset>
             
-
-          </div>
-
+      </div>
           <div class="personal-info col-sm-6">
             
             <fieldset>
               <legend>Personal Info</legend>
               
               <div class="form-group">
-                <label for="email">Email Address</label>
-                <input type="text" class="form-control" name="email" placeholder="Email Address" required>
+              <label for="email">Email Address</label>
+              <input type="text" class="form-control" name="email" placeholder="Email Address">
+              <span id="emailError" class="error-message"></span>
               </div>
 
-              <div class="form-group">
-                <label for="firstname">First Name</label>
-                <input type="text" class="form-control" name="firstname" placeholder="First Name" required>
-              </div>
+          <div class="form-group">
+              <label for="fullname">Full Name</label>
+              <input type="text" class="form-control" name="fullname" placeholder="Full Name">
+              <span id="fullnameError" class="error-message"></span>
+          </div>
 
-              <div class="form-group">
-                <label for="lastname">Last Name</label>
-                <input type="text" class="form-control" name="lastname" placeholder="Last Name" required>
-              </div>
+          <div class="form-group">
+              <label for="phonenumber">Phone Number</label>
+              <input type="text" class="form-control" name="phonenumber" placeholder="Phone Number">
+              <span id="phonenumberError" class="error-message"></span>
+          </div>
+
 
             </fieldset>
             
+            
+        <div id="error-message"></div>
 
           </div>
         </div>
@@ -138,7 +146,85 @@
     </div>
 
   </section>
+  <script>
+    function validateForm() {
+        var username = document.querySelector('input[name="username"]').value;
+        var password = document.querySelector('input[name="password"]').value;
+        var email = document.querySelector('input[name="email"]').value;
+        var fullname = document.querySelector('input[name="fullname"]').value;
+        var phonenumber = document.querySelector('input[name="phonenumber"]').value;
 
+        if (username.trim() === '' || password.trim() === '' || email.trim() === '' || fullname.trim() === '' || phonenumber.trim() === '') {
+            document.getElementById('error-message').innerText = 'Please fill in all fields.';
+            return false;
+        }
+
+        if (!validateUsername(username)) {
+            document.getElementById('usernameError').innerText = 'Letters and numbers only.';
+            return false;
+        } else {
+            document.getElementById('usernameError').innerText = '';
+        }
+
+        if (email.trim() === '') {
+            document.getElementById('emailError').innerText = 'Please enter an email.';
+            return false;
+        }
+
+        if (!validateEmail(email)) {
+            document.getElementById('emailError').innerText = 'Enter a valid email address.';
+            return false;
+        } else {
+            document.getElementById('emailError').innerText = '';
+        }
+
+        if (!validatePassword(password)) {
+            document.getElementById('passwordError').innerText = 'Min 8 chars, 1 uppercase, 1 lowercase, 1 number, and 1 special character.';
+            return false;
+        } else {
+            document.getElementById('passwordError').innerText = '';
+        }
+
+        if (fullname.trim() === '') {
+            document.getElementById('fullnameError').innerText = 'Please enter your full name.';
+            return false;
+        } else {
+            document.getElementById('fullnameError').innerText = '';
+        }
+
+        if (phonenumber.trim() === '') {
+            document.getElementById('phonenumberError').innerText = 'Please enter your phone number.';
+            return false;
+        } else {
+            document.getElementById('phonenumberError').innerText = '';
+        }
+
+        return true; // Form will submit if all validations pass
+    }
+
+    function validateUsername(username) {
+        return /^[a-zA-Z0-9]+$/.test(username);
+    }
+
+    function validateEmail(email) {
+        return /\S+@\S+\.\S+/.test(email);
+    }
+
+    function validatePassword(password) {
+        return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(password);
+    }
+
+    document.getElementById('togglePassword').addEventListener('click', function () {
+      var passwordInput = document.getElementById('password');
+      passwordInput.type = passwordInput.type === 'password' ? 'text' : 'password';
+    });
+
+    // Toggle confirm password visibility
+    document.getElementById('toggleConfPassword').addEventListener('click', function () {
+      var confPasswordInput = document.getElementById('confpassword');
+      confPasswordInput.type = confPasswordInput.type === 'password' ? 'text' : 'password';
+    });
+</script>
 
 	<script src="assets/js/jquery-3.1.1.min.js"></script>
 	<script src="assets/js/bootstrap.min.js"></script>

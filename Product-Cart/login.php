@@ -1,40 +1,37 @@
-<?php 
+<?php
+session_start();
 
-  session_start();
+require 'assets/conn.php';
+require 'functions.php';
 
-  require 'assets/conn.php';
-  require 'functions.php';
-
-  if(isset($_POST['login'])) {
-
+if (isset($_POST['login'])) {
     $uname = clean($_POST['username']);
     $pword = clean($_POST['password']);
 
-    $query = "SELECT * FROM users WHERE username = '$uname' AND password = '$pword'";
+    // Using prepared statements to prevent SQL injection
+    $query = "SELECT * FROM users WHERE username = ? AND password = ?";
+    $stmt = mysqli_prepare($con, $query);
+    
+    // Bind parameters and execute the query
+    mysqli_stmt_bind_param($stmt, 'ss', $uname, $pword);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
 
-    $result = mysqli_query($con, $query);
+    if (mysqli_num_rows($result) > 0) {
+        $row = mysqli_fetch_assoc($result);
 
-    if(mysqli_num_rows($result) > 0) {
+        $_SESSION['userid'] = $row['id'];
+        $_SESSION['username'] = $row['username'];
+        $_SESSION['password'] = $row['password'];
 
-      $row = mysqli_fetch_assoc($result);
-
-      $_SESSION['userid'] = $row['id'];
-      $_SESSION['username'] = $row['username'];
-      $_SESSION['password'] = $row['password'];
-
-      header("location:index.php");
-      exit;
-
+        header("location:index.php");
+        exit;
     } else {
-
-      $_SESSION['errprompt'] = "Wrong username or password.";
-
+        $_SESSION['errprompt'] = "Wrong username or password.";
     }
+}
 
-  }
-
-  if(!isset($_SESSION['username'], $_SESSION['password'])) {
-
+if (!isset($_SESSION['username'], $_SESSION['password'])) {
 ?>
 
 <!DOCTYPE html>
@@ -99,15 +96,12 @@
 </html>
 
 <?php
-
-  } else {
+} else {
     header("location:profile.php");
     exit;
-  }
+}
 
-  unset($_SESSION['prompt']);
-  unset($_SESSION['errprompt']);
-
-  mysqli_close($con);
-
+unset($_SESSION['prompt']);
+unset($_SESSION['errprompt']);
+mysqli_close($con);
 ?>

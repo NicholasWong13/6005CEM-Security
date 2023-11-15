@@ -192,3 +192,8 @@ input:focus .border
     display: block;
     font-weight: bold;
 }
+
+.error-message {
+    color: red;
+    font-size: 12px;
+}
