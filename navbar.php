@@ -1,7 +1,7 @@
 <header class="site-header">
     <div class="site-identity">
-    <a href="home.php"><img src="assets/img/StudioC.png" alt="Studio C Hair & Beauty Salon"/></a>
-    <h1><a href="home.php">Studio C Hair & Beauty Salon</a></h1> 
+    <a href="index.php"><img src="assets/img/StudioC.png" alt="Studio C Hair & Beauty Salon"/></a>
+    <h1><a href="index.php">Studio C Hair & Beauty Salon</a></h1> 
 </div>
     <nav class="navigation">
     <li><a href="about.php">About Us</a></li>
