@@ -52,6 +52,13 @@
 				  	</a>
 			  	</li>
 
+				  <li class="nav-item active">
+					<a class="nav-link" href="analytics.php">
+						<i class="fas fa-fw fa-analytics"></i>
+				  		<span>Analytics</span>
+				  	</a>
+			  	</li>
+
 	  			<!-- Divider -->
 	  			<hr class="sidebar-divider">
 
@@ -59,6 +66,7 @@
 	  			<div class="sidebar-heading">
 					BUSINESS & SERVICES
 	  			</div>
+				
 
 	  			<!-- Nav Item - Pages Collapse Menu -->
 	  			<li class="nav-item">

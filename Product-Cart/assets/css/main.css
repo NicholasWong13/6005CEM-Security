@@ -35,14 +35,22 @@ section strong {
 	float: right;
 }
 
+
+    .account-info label,
+    .account-info input,
+    .account-info button {
+        margin-bottom: 10px;
+    }
+
 .registration-form {
-	background: #f8f8f8;
+    background: #f8f8f8;
     border: 1px solid #e7e7e7;
-    max-width: 800px;
+    max-width: 600px;
     padding: 40px 50px;
     text-align: left;
     width: 100%;
 }
+
 
 .registration-form form a {
 	clear: both;

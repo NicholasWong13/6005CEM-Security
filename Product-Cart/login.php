@@ -82,7 +82,7 @@ if (!isset($_SESSION['username'], $_SESSION['password'])) {
         
         <a href="register.php">Need an account?</a>
         <input class="btn btn-primary" type="submit" name="login" value="Log In">
-        <br/><a href="http://localhost/StudioCHair&BeautySalon/home.php">Back to Main Homepage</a>
+        <br/><a href="http://localhost/6005CEM-Security/home.php">Back to Main Homepage</a>
 
       </form>
     </div>
