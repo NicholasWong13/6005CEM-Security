@@ -1,115 +1,112 @@
-<?php
-error_reporting(E_ALL);
-ini_set('display_errors', '1');
+<?php 
 
-session_start();
+  session_start();
 
-require 'assets/conn.php';
+  require 'assets/conn.php';
+  require 'functions.php';
 
-// Check if the user is already logged in
-if (isset($_SESSION['user_id'])) {
-    header("location: profile.php");
-    exit;
-}
+  if(isset($_POST['login'])) {
 
-// Process login form submission
-if (isset($_POST['login'])) {
-    $email = mysqli_real_escape_string($con, $_POST['email']);
-    $plain_password = mysqli_real_escape_string($con, $_POST['password']);
+    $uname = clean($_POST['username']);
+    $pword = clean($_POST['password']);
 
-    // Using prepared statements to prevent SQL injection
-    $query = "SELECT user_id, email, password FROM users WHERE email = ?";
-    $stmt = mysqli_prepare($con, $query);
+    $query = "SELECT * FROM users WHERE username = '$uname' AND password = '$pword'";
 
-    if ($stmt) {
-        mysqli_stmt_bind_param($stmt, 's', $email);
-        mysqli_stmt_execute($stmt);
-        $result = mysqli_stmt_get_result($stmt);
+    $result = mysqli_query($con, $query);
 
-        if ($row = mysqli_fetch_assoc($result)) {
-            // Check if the account is active
-            if ($row['account_status'] == 1) {
-                // Verify the password using password_verify
-                if (password_verify($plain_password, $row['password'])) {
-                    // Password is correct, set session and redirect to the dashboard or home page
-                    $_SESSION['user_id'] = $row['user_id'];
-                    $_SESSION['email'] = $row['email'];
-        
-                    header("location: dashboard.php"); // Update to the appropriate page after login
-                    exit;
-                } else {
-                    $_SESSION['errprompt'] = "Incorrect password. Please try again.";
-                }
-            } else {
-                $_SESSION['errprompt'] = "Your account is inactive. Please contact support.";
-            }
+    if (mysqli_num_rows($result) > 0) {
+        $row = mysqli_fetch_assoc($result);
+
+        if ($row['account_status'] == 1) { // Check if the account is active
+            $_SESSION['userid'] = $row['id'];
+            $_SESSION['username'] = $row['username'];
+            $_SESSION['password'] = $row['password'];
+
+            header("location:index.php");
+            exit;
         } else {
-            $_SESSION['errprompt'] = "User not found. Please check your email.";
-        }        
-
-        mysqli_stmt_close($stmt); // Close the statement
+            $_SESSION['errprompt'] = "Your account is disabled. Please contact support.";
+        }
     } else {
-        $_SESSION['errprompt'] = "Error preparing the statement.";
+        $_SESSION['errprompt'] = "Wrong username or password.";
     }
-
-    // Close the database connection
-    mysqli_close($con);
 }
 
-// Include login header
-include 'login-header.php';
+  if(!isset($_SESSION['username'], $_SESSION['password'])) {
+
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Login - Studio C Hair & Beauty Salon</title>
-    <link href="assets/css/bootstrap.min.css" rel="stylesheet">
-    <link href="assets/css/main.css" rel="stylesheet">
+
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<title>Login - Studio C Hair & Beauty Salon</title>
+
+	<link href="assets/css/bootstrap.min.css" rel="stylesheet">
+  <link href="assets/css/main.css" rel="stylesheet">
+
 </head>
 <body>
+  
+  <?php include 'login-header.php'; ?>
+  
+  <section class="center-text"><br /><br /><br />
+    
+    <h3>User Login</h3>
 
-<section class="center-text"><br /><br /><br />
-    <strong>Log In</strong>
     <div class="login-form box-center">
-        <?php
-        if (isset($_SESSION['prompt'])) {
-            echo '<div class="prompt-message">' . htmlspecialchars($_SESSION['prompt']) . '</div>';
+      <?php 
+
+        if(isset($_SESSION['prompt'])) {
+          showPrompt();
         }
 
-        if (isset($_SESSION['errprompt'])) {
-            echo '<div class="error-message">' . htmlspecialchars($_SESSION['errprompt']) . '</div>';
+        if(isset($_SESSION['errprompt'])) {
+          showError();
         }
-        ?>
 
-        <form action="login_check.php" method="POST">
-            <div class="form-group">
-                <label for="email" class="sr-only">Email</label>
-                <input type="text" class="form-control" name="email" placeholder="Email" required>
-            </div>
+      ?>
+      <form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" method="POST">
+        
+        <div class="form-group">
+          <label for="username" class="sr-only">Username</label>
+          <input type="text" class="form-control" name="username" placeholder="Username" required autofocus>
+        </div>
 
-            <div class="form-group">
-                <label for="password" class="sr-only">Password</label>
-                <input type="password" class="form-control" name="password" placeholder="Password" required>
-            </div>
+        <div class="form-group">
+          <label for="password" class="sr-only">Password</label>
+          <input type="password" class="form-control" name="password" placeholder="Password" required>
+        </div>
+        
+        <a href="register.php">Need an account?</a>
+        <input class="btn btn-primary" type="submit" name="login" value="Log In">
+        <br/><a href="http://localhost/StudioCHair&BeautySalon/home.php">Back to Main Homepage</a>
 
-            <a href="register.php">Need an account?</a>
-            <input class="btn btn-primary" type="submit" name="login" value="Log In">
-            <br/><a href="http://localhost/6005CEM-Security/home.php">Back to Main Homepage</a>
-        </form>
-    </div>
-</section>
+      </form>
 
-<script src="assets/js/jquery-3.1.1.min.js"></script>
-<script src="assets/js/bootstrap.min.js"></script>
+  </section>
+
+  </div>
+
+	<script src="assets/js/jquery-3.1.1.min.js"></script>
+	<script src="assets/js/bootstrap.min.js"></script>
 </body>
 </html>
 
 <?php
-// Clear session variables
-unset($_SESSION['prompt']);
-unset($_SESSION['errprompt']);
+
+  } else {
+    header("location:profile.php");
+    exit;
+  }
+
+  unset($_SESSION['prompt']);
+  unset($_SESSION['errprompt']);
+
+  mysqli_close($con);
+
 ?>

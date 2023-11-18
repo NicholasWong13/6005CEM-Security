@@ -1,6 +1,6 @@
 <?php
 
-$num_products_on_each_page = 5;
+$num_products_on_each_page = 8;
 
 $current_page = isset($_GET['p']) && is_numeric($_GET['p']) ? (int)$_GET['p'] : 1;
 

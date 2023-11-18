@@ -34,10 +34,10 @@
                         <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                             <thead>
                                 <tr>
-                                    <th>User Name</th>
-                                    <th>First Name</th>
-                                    <th>Last Name</th>
+                                    <th>Username</th>
+                                    <th>Full Name</th>
                                     <th>E-mail</th>
+                                    <th>Phone Number</th>
                                     <th>Date Joined</th>
                                     <th>Manage</th>
                                 </tr>
@@ -52,9 +52,9 @@
                                 {
                                     echo "<tr>
                                         <td>"  . $row["username"] . "</td>
-                                        <td>"  . $row["firstname"] . "</td>
-                                        <td>"  . $row["lastname"] . "</td>
+                                        <td>"  . $row["fullname"] . "</td>
                                         <td>"  . $row["email"] . "</td>
+                                        <td>"  . $row["phonenumber"] . "</td>
                                         <td>"  . $row["date_joined"] . "</td>
                                         <td>
                                             <a class ='btn btn-danger btn-sm rounded-0 fa fa-trash' href='deleteusers.php?id=$row[id]'></a>
