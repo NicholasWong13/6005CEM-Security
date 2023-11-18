@@ -1,6 +1,6 @@
 # 6005CEM Security - Secure Application Development
 # Studio C Hair & Beauty Salon
-# Group 10
+# Group 10 - 6005CEM
 
 Members:
 1. Nicholas Wong Kai Xin
