@@ -27,20 +27,25 @@ if (isset($_POST['login'])) {
         $result = mysqli_stmt_get_result($stmt);
 
         if ($row = mysqli_fetch_assoc($result)) {
-            // Verify the password using password_verify
-            if (password_verify($plain_password, $row['password'])) {
-                // Password is correct, set session and redirect to the dashboard or home page
-                $_SESSION['user_id'] = $row['user_id'];
-                $_SESSION['email'] = $row['email'];
-
-                header("location: dashboard.php"); // Update to the appropriate page after login
-                exit;
+            // Check if the account is active
+            if ($row['account_status'] == 1) {
+                // Verify the password using password_verify
+                if (password_verify($plain_password, $row['password'])) {
+                    // Password is correct, set session and redirect to the dashboard or home page
+                    $_SESSION['user_id'] = $row['user_id'];
+                    $_SESSION['email'] = $row['email'];
+        
+                    header("location: dashboard.php"); // Update to the appropriate page after login
+                    exit;
+                } else {
+                    $_SESSION['errprompt'] = "Incorrect password. Please try again.";
+                }
             } else {
-                $_SESSION['errprompt'] = "Incorrect password. Please try again.";
+                $_SESSION['errprompt'] = "Your account is inactive. Please contact support.";
             }
         } else {
             $_SESSION['errprompt'] = "User not found. Please check your email.";
-        }
+        }        
 
         mysqli_stmt_close($stmt); // Close the statement
     } else {
