@@ -216,6 +216,15 @@ if (isset($_POST['register'])) {
      document.getElementById('phonenumberError').innerText = '';
  }
 
+ // Check if terms and conditions are accepted
+ var termsCheckbox = document.getElementById('termsCheckbox');
+  if (!termsCheckbox.checked) {
+    document.getElementById('termsError').innerText = 'Please accept the Terms and Conditions.';
+    return false;
+  } else {
+    document.getElementById('termsError').innerText = '';
+  }
+
  return true; // Form will submit if all validations pass
 }
 
