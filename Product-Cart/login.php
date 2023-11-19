@@ -31,16 +31,12 @@ if (isset($_POST['login'])) {
     if (mysqli_num_rows($result) > 0) {
         $row = mysqli_fetch_assoc($result);
 
-        if ($row['account_status'] == 1) { // Check if the account is active
-            $_SESSION['userid'] = $row['id'];
-            $_SESSION['username'] = $row['username'];
-            $_SESSION['password'] = $row['password'];
+        $_SESSION['userid'] = $row['id'];
+        $_SESSION['username'] = $row['username'];
+        $_SESSION['password'] = $row['password'];
 
-            header("location:index.php");
-            exit;
-        } else {
-            $_SESSION['errprompt'] = "Your account is disabled. Please contact support.";
-        }
+        header("location:index.php");
+        exit;
     } else {
         $_SESSION['errprompt'] = "Wrong username or password.";
     }
