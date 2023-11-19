@@ -58,53 +58,62 @@ if (isset($_POST['register'])) {
 <body>
     <?php include 'login-header.php'; ?>
     <section class="center-text">
-        <br/><h3>Register</h3><br/>
-        <div class="registration-form box-center clearfix">
-            <?php 
-            if(isset($_SESSION['errprompt'])) {
-                showError();
-            }
-            ?>
-            <form name="registrationForm" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" method="POST" onsubmit="return validateForm()">
-                <div class="row">
-                    <div class="account-info col-sm-6">
-                        <fieldset>
-                            <legend>Account Info</legend>
-                            <div class="form-group">
-                                <label for="username">Username</label>
-                                <input type="text" class="form-control" name="username" placeholder="Username">
-                            </div>
-                            <div class="form-group">
-                                <label for="password">Password</label>
-                                <input type="password" class="form-control" name="password" id="password" placeholder="Password" oninput="checkPasswordStrength()" onclick="showPasswordRequirements()">
-                                <br/><input type="checkbox" onclick="togglePasswordVisibility()"> Show Password
-                                <div id="password-strength"></div>
-                            </div>
-                        </fieldset>
-                    </div>
-                    <div class="personal-info col-sm-6">
-                        <fieldset>
-                            <legend>Personal Info</legend>
-                            <div class="form-group">
-                                <label for="email">Email Address</label>
-                                <input type="text" class="form-control" name="email" placeholder="Email Address">
-                            </div>
-                            <div class="form-group">
-                                <label for="fullname">Full Name</label>
-                                <input type="text" class="form-control" name="fullname" placeholder="Full Name">
-                            </div>
-                            <div class="form-group">
-                                <label for="phonenumber">Phone Number</label>
-                                <input type="text" class="form-control" name="phonenumber" placeholder="Phone Number">
-                            </div>
-                        </fieldset>
-                    </div>
+    <br/>
+    <h3>Register</h3><br/>
+    <div class="registration-form box-center clearfix">
+        <?php 
+        if(isset($_SESSION['errprompt'])) {
+            showError();
+        }
+        ?>
+        <form name="registrationForm" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" method="POST" onsubmit="return validateForm()">
+            <div class="row">
+                <div class="account-info col-sm-6">
+                    <fieldset>
+                        <legend>Account Info</legend>
+                        <div class="form-group">
+                            <label for="username">Username</label>
+                            <input type="text" class="form-control" name="username" placeholder="Username" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="password">Password</label>
+                            <input type="password" class="form-control" name="password" id="password" placeholder="Password" oninput="checkPasswordStrength()" onclick="showPasswordRequirements()" required>
+                            <br/><input type="checkbox" onclick="togglePasswordVisibility()"> Show Password
+                            <div id="password-strength"></div>
+                        </div>
+                    </fieldset>
                 </div>
-                <a href="login.php">Go back</a>
-                <input class="btn btn-primary" type="submit" name="register" value="Register">
-            </form>
-        </div>
-    </section>
+                <div class="personal-info col-sm-6">
+                    <fieldset>
+                        <legend>Personal Info</legend>
+                        <div class="form-group">
+                            <label for="email">Email Address</label>
+                            <input type="email" class="form-control" name="email" placeholder="Email Address" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="fullname">Full Name</label>
+                            <input type="text" class="form-control" name="fullname" placeholder="Full Name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="phonenumber">Phone Number</label>
+                            <input type="tel" class="form-control" name="phonenumber" placeholder="Phone Number" required>
+                        </div>  
+                    </fieldset>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>
+                I agree to the <a href="../privacy-policy.pdf" target="_blank">Privacy Policy</a>
+                    <input type="checkbox" id="termsCheckbox" name="termsCheckbox">
+                </label>
+            </div>
+            <span id="termsError" class="error-message"></span>
+            <a href="login.php">Go back</a>
+            <input class="btn btn-primary" type="submit" name="register" value="Register">
+        </form>
+    </div>
+</section>
+
     <script>
         function validateForm() {
             var username = document.forms["registrationForm"]["username"].value;
