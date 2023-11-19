@@ -1,83 +1,92 @@
 <?php
-    session_start();
+session_start();
 
-    // Page Title
-    $pageTitle = 'Analytics';
+// Page Title
+$pageTitle = 'Analytics';
 
-    // Includes
-    include 'connect.php';
-    include 'Includes/functions/functions.php'; 
-    include 'Includes/templates/header.php';
+// Includes
+include 'connect.php';
+include 'Includes/functions/functions.php'; 
+include 'Includes/templates/header.php';
 
-    // Check If user is already logged in
-    if(isset($_SESSION['username_barbershop_Xw211qAAsq4']) && isset($_SESSION['password_barbershop_Xw211qAAsq4']))
-    {
+// Check If user is already logged in
+if(isset($_SESSION['username_barbershop_Xw211qAAsq4']) && isset($_SESSION['password_barbershop_Xw211qAAsq4']))
+{
+    // Begin Page Content
 ?>
-        <!-- Begin Page Content -->
-        <div class="container-fluid">
+
+<!-- Page Wrapper -->
+<div id="wrapper">
+
+<!-- Begin Page Content -->
+<div class="container-fluid">
+
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Analytics Overview</h1>
+        <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+            <i class="fas fa-download fa-sm text-white-50"></i>
+            Generate Report
+        </a>
+    </div>
+
     
-            <!-- Page Heading -->
-            <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                <h1 class="h3 mb-0 text-gray-800">Analytics Overview</h1>
-                <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
-                    <i class="fas fa-download fa-sm text-white-50"></i>
-                    Generate Report
-                </a>
-            </div>
+    <?php
+    // Check the type parameter in the URL
+    $chartType = isset($_GET['type']) ? $_GET['type'] : '';
 
-            <!-- Users Chart -->
-            <?php
-                $stmt = $con->prepare("SELECT COUNT(id) AS total_users, DATE_FORMAT(date_joined, '%Y-%m') AS month_year FROM users GROUP BY DATE_FORMAT(date_joined, '%Y-%m')");
-                $stmt->execute();
-                $rows_users_chart = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            ?>
-            <div class="card shadow mb-4">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">Users Chart</h6>
-                </div>
-                <div class="card-body">
-                    <canvas id="usersChart"></canvas>
-                </div>
-            </div>
-        </div>
-
-        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-        <script>
-            // PHP data to JavaScript array
-            var usersChartData = <?php echo json_encode($rows_users_chart); ?>;
-
-            // Chart.js
-            var ctx = document.getElementById('usersChart').getContext('2d');
-            var usersChart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: usersChartData.map(item => item.month_year),
-                    datasets: [{
-                        label: 'Total Users',
-                        data: usersChartData.map(item => item.total_users),
-                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                        borderColor: 'rgba(75, 192, 192, 1)',
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    scales: {
-                        y: {
-                            beginAtZero: true
-                        }
-                    }
-                }
-            });
-        </script>
-  
-<?php 
-        
-        // Include Footer
-        include 'Includes/templates/footer.php';
+    // Display the corresponding chart based on the type parameter
+    switch ($chartType) {
+        case 'user':
+            include 'user-analytics.php'; // File containing User Chart code
+            break;
+        case 'appointment':
+            include 'appointment-analytics.php'; // File containing Appointment Chart code
+            break;
+        case 'order':
+            include 'order-analytics.php'; // File containing Order Chart code
+            break;
+        default:
+            echo 'Please select a valid analytics from the navigation.';
     }
-    else
-    {
-        header('Location: login.php');
-        exit();
-    }
+    ?>
+    
+<!-- Include your navigation here -->
+<ul class="navbar-nav ml-auto">
+    <li class="nav-item">
+        <a class="nav-link" href="analytics.php?type=user">User Analytics</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="analytics.php?type=appointment">Appointment Analytics</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="analytics.php?type=order">Order Analytics</a>
+    </li>
+    <!-- Other navigation links... -->
+</ul><br/>
+
+</div>
+<!-- End of Page Content -->
+
+<!-- Include your footer here -->
+<?php include 'Includes/templates/footer.php'; ?>
+
+</div>
+<!-- End of Page Wrapper -->
+
+<!-- Bootstrap core JavaScript -->
+<script src="vendor/jquery/jquery.min.js"></script>
+<script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+<!-- Include your additional scripts here -->
+
+</body>
+
+</html>
+<?php
+}
+else
+{
+header('Location: login.php');
+exit();
+}
 ?>
