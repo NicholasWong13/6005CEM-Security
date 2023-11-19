@@ -39,6 +39,7 @@
                                     <th>E-mail</th>
                                     <th>Phone Number</th>
                                     <th>Date Joined</th>
+                                    <th>Account Status</th>
                                     <th>Manage</th>
                                 </tr>
                             </thead> 
@@ -48,20 +49,48 @@
                             $sql = "SELECT * FROM users;";
                             $result = mysqli_query($con,$sql);
 
-                            while ($row = mysqli_fetch_assoc($result))
-                                {
-                                    echo "<tr>
-                                        <td>"  . $row["username"] . "</td>
-                                        <td>"  . $row["fullname"] . "</td>
-                                        <td>"  . $row["email"] . "</td>
-                                        <td>"  . $row["phonenumber"] . "</td>
-                                        <td>"  . $row["date_joined"] . "</td>
-                                        <td>
-                                            <a class ='btn btn-danger btn-sm rounded-0 fa fa-trash' href='deleteusers.php?id=$row[id]'></a>
-                                        </td>
-                                    </tr>";
-                                }
-                            ?>
+                            while ($row = mysqli_fetch_assoc($result)) {
+                                // Convert account status to "Active" or "Inactive"
+                                $accountStatus = ($row["account_status"] == 1) ? 'Active' : 'Inactive';
+                        
+                                $delete_data = "deleteModal" . $row["id"]; // Use a unique identifier for each modal
+                        
+                                echo "<tr>
+                                    <td>"  . $row["username"] . "</td>
+                                    <td>"  . $row["fullname"] . "</td>
+                                    <td>"  . $row["email"] . "</td>
+                                    <td>"  . $row["phonenumber"] . "</td>
+                                    <td>"  . $row["date_joined"] . "</td>
+                                    <td>"  . $accountStatus . "</td>
+                                    <td>
+                                    <a class='btn btn-success btn-sm rounded-0 fas fa-ban' href='editstatus.php?id=$row[id]' onclick='editStatus($row[id])'></a>
+                                    <button class='btn btn-danger btn-sm rounded-0' type='button' data-toggle='modal' data-target='#$delete_data'><i class='fa fa-trash'></i></button>
+                                    
+                                        <!-- Delete Modal -->
+
+                                        <div class='modal fade' id='$delete_data' tabindex='-1' role='dialog' aria-labelledby='$delete_data' aria-hidden='true'>
+                                            <div class='modal-dialog' role='document'>
+                                                <div class='modal-content'>
+                                                    <div class='modal-header'>
+                                                        <h5 class='modal-title' id='exampleModalLabel'>Delete User</h5>
+                                                        <button type='button' class='close' data-dismiss='modal' aria-label='Close'>
+                                                            <span aria-hidden='true'>&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class='modal-body'>
+                                                        Are you sure you want to delete this user?
+                                                    </div>
+                                                    <div class='modal-footer'>
+                                                        <button type='button' class='btn btn-secondary' data-dismiss='modal'>Cancel</button>
+                                                        <a class='btn btn-danger' href='deleteusers.php?id={$row['id']}'>Delete</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>";
+                            }
+                        ?>
                             </tbody>
                         </table>
                     </div>
@@ -81,3 +110,8 @@
     }
 
 ?>
+
+
+
+
+
