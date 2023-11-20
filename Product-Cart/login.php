@@ -11,7 +11,6 @@ session_set_cookie_params(
 session_start();
 session_regenerate_id(true); // Regenerate session ID to prevent session fixation
 
-
 require 'assets/conn.php';
 require 'functions.php';
 
@@ -20,29 +19,41 @@ if (isset($_POST['login'])) {
     $pword = clean($_POST['password']);
 
     // Using prepared statements to prevent SQL injection
-    $query = "SELECT * FROM users WHERE username = ? AND password = ?";
+    $query = "SELECT id, username, password, account_status FROM users WHERE username = ?";
     $stmt = mysqli_prepare($con, $query);
-    
+
     // Bind parameters and execute the query
-    mysqli_stmt_bind_param($stmt, 'ss', $uname, $pword);
+    mysqli_stmt_bind_param($stmt, 's', $uname);
     mysqli_stmt_execute($stmt);
     $result = mysqli_stmt_get_result($stmt);
 
     if (mysqli_num_rows($result) > 0) {
         $row = mysqli_fetch_assoc($result);
-
-        $_SESSION['userid'] = $row['id'];
-        $_SESSION['username'] = $row['username'];
-        $_SESSION['password'] = $row['password'];
-
-        header("location:index.php");
-        exit;
+    
+        // Check if the account is active (status = 1)
+        if ($row['account_status'] == 1) {
+            // Use password_verify to check the hashed password
+            if (password_verify($pword, $row['password'])) {
+                $_SESSION['userid'] = $row['id'];
+                $_SESSION['username'] = $row['username'];
+    
+                header("location:index.php");
+                exit;
+            } else {
+                $_SESSION['errprompt'] = "Wrong username or password.";
+            }
+        } else {
+            $_SESSION['errprompt'] = "Your account is inactive. Please contact support.";
+        }
     } else {
         $_SESSION['errprompt'] = "Wrong username or password.";
     }
-}
+}    
+
 if (!isset($_SESSION['username'], $_SESSION['password'])) {
+    // Your login form goes here
 ?>
+
 
 <!DOCTYPE html>
 <html>

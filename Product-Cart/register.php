@@ -22,16 +22,25 @@ if (isset($_POST['register'])) {
         $_SESSION['errprompt'] = "Email must be from gmail.com, outlook.com, or yahoo.com.";
     } else {
         // Check if the username already exists
-        $query = "SELECT username FROM users WHERE username = '$uname'";
-        $result = mysqli_query($con, $query);
+        $query = "SELECT username FROM users WHERE username = ?";
+        $stmt = mysqli_prepare($con, $query);
+        mysqli_stmt_bind_param($stmt, 's', $uname);
+        mysqli_stmt_execute($stmt);
+        $result = mysqli_stmt_get_result($stmt);
 
         if (mysqli_num_rows($result) == 0) {
             // Username is unique, proceed with registration
 
-            $query = "INSERT INTO users (username, password, email, fullname, phonenumber, date_joined)
-            VALUES ('$uname', '$pword', '$email', '$fname', '$phone', NOW())";
+            // Hash the password using password_hash()
+            $hashedPassword = password_hash($pword, PASSWORD_DEFAULT);
 
-            if (mysqli_query($con, $query)) {
+            $query = "INSERT INTO users (username, password, email, fullname, phonenumber, date_joined)
+            VALUES (?, ?, ?, ?, ?, NOW())";
+
+            $stmt = mysqli_prepare($con, $query);
+            mysqli_stmt_bind_param($stmt, 'sssss', $uname, $hashedPassword, $email, $fname, $phone);
+
+            if (mysqli_stmt_execute($stmt)) {
                 $_SESSION['prompt'] = "Account Registered. You can now log in.";
                 header("location:login.php");
                 exit;
@@ -102,17 +111,19 @@ if (isset($_POST['register'])) {
                 </div>
             </div>
             <div class="form-group">
-                <label>
-                I agree to the <a href="../privacy-policy.pdf" target="_blank">Privacy Policy</a>
-                    <input type="checkbox" id="termsCheckbox" name="termsCheckbox">
-                </label>
+                
             </div>
             <span id="termsError" class="error-message"></span>
             <a href="login.php">Go back</a>
             <input class="btn btn-primary" type="submit" name="register" value="Register">
         </form>
+        <label><br><br> <input type="checkbox" id="termsCheckbox" name="termsCheckbox">
+                I agree to the <a href="../privacy-policy.pdf" target="_blank">Privacy Policy</a>
+                   
+                </label>
     </div>
 </section>
+
 
     <script>
         function validateForm() {
