@@ -54,7 +54,7 @@
 
 				  <li class="nav-item active">
 					<a class="nav-link" href="analytics.php">
-						<i class="fas fa-fw fa-analytics"></i>
+						<i class="fas fa-chart-bar"></i>
 				  		<span>Analytics</span>
 				  	</a>
 			  	</li>
