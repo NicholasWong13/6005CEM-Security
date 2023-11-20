@@ -3,7 +3,7 @@
     <!-- Brand and toggle get grouped for better mobile display -->
     <div class="navbar-header">
 
-      <a class="navbar-brand" href="http://localhost/StudioCHair&BeautySalon/home.php">Studio C Hair & Beauty Salon</a>
+      <a class="navbar-brand" href="http://localhost/6005CEM-Security/home.php">Studio C Hair & Beauty Salon</a>
     </div>
 
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
