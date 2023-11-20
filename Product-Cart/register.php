@@ -29,9 +29,7 @@ if (isset($_POST['register'])) {
         $result = mysqli_stmt_get_result($stmt);
 
         if (mysqli_num_rows($result) == 0) {
-            // Username is unique, proceed with registration
 
-            // Hash the password using password_hash()
             $hashedPassword = password_hash($pword, PASSWORD_DEFAULT);
 
             $query = "INSERT INTO users (username, password, email, fullname, phonenumber, date_joined)
@@ -118,9 +116,8 @@ if (isset($_POST['register'])) {
             <input class="btn btn-primary" type="submit" name="register" value="Register">
         </form>
         <label><br><br> <input type="checkbox" id="termsCheckbox" name="termsCheckbox">
-                I agree to the <a href="../privacy-policy.pdf" target="_blank">Privacy Policy</a>
-                   
-                </label>
+                I agree to the <a href="../privacy-policy.pdf" target="_blank">Privacy Policy</a>           
+        </label>
     </div>
 </section>
 
@@ -132,6 +129,13 @@ if (isset($_POST['register'])) {
             var email = document.forms["registrationForm"]["email"].value;
             var fullname = document.forms["registrationForm"]["fullname"].value;
             var phonenumber = document.forms["registrationForm"]["phonenumber"].value;
+            var checkbox = document.getElementById("termsCheckbox");
+
+            if (!checkbox.checked) {
+                alert("Please agree to the Privacy Policy before submitting.");
+                return false; 
+            }
+
             if (username === "" || password === "" || email === "" || fullname === "" || phonenumber === "") {
                 alert("All fields are required.");
                 return false;
