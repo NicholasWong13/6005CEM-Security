@@ -30,9 +30,7 @@ if (isset($_POST['login'])) {
     if (mysqli_num_rows($result) > 0) {
         $row = mysqli_fetch_assoc($result);
     
-        // Check if the account is active (status = 1)
         if ($row['account_status'] == 1) {
-            // Use password_verify to check the hashed password
             if (password_verify($pword, $row['password'])) {
                 $_SESSION['userid'] = $row['id'];
                 $_SESSION['username'] = $row['username'];
@@ -51,7 +49,6 @@ if (isset($_POST['login'])) {
 }    
 
 if (!isset($_SESSION['username'], $_SESSION['password'])) {
-    // Your login form goes here
 ?>
 
 
