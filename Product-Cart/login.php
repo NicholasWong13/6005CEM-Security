@@ -5,7 +5,7 @@ session_set_cookie_params(
     $sessionParams["lifetime"],
     $sessionParams["path"],
     $sessionParams["domain"],
-    true, // Secure flag: Change to true if using HTTPS
+    true,
     true  // HTTPOnly flag
 );
 session_start();
