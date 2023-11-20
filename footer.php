@@ -35,6 +35,6 @@
          </li>
         </ul>
         <p class="copyright">Studio C Hair & Beauty Salon &copy; Copyright 2022 </p>
-        <p class="terms"><a href="privacy-policy.pdf" target="_blank">Privcay Policy</a> | <a href="Disclaimer.pdf" target="_blank">Disclamier</a></p>
+        <p class="terms"><a href="privacy-policy.pdf" target="_blank">Privacy Policy</a> | <a href="Disclaimer.pdf" target="_blank">Disclamier</a></p>
     </footer>
 </div>

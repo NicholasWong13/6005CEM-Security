@@ -108,7 +108,7 @@
 					<button type="submit" name="signin-button" >Sign In</button>
 				</p>
 				
-				<span class="forgotPW"><br/><a href="http://localhost/StudioCHair&BeautySalon/home.php">Back to Main Homepage</a></span>
+				<span class="forgotPW"><br/><a href="http://localhost/6005CEM-Security/home.php">Back to Main Homepage</a></span>
 			</form>
 		</div>
 		
