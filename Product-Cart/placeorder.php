@@ -17,7 +17,6 @@
     require_once('./assets/inc/config.php');    
     require_once('./assets/inc/helpers.php');  
 
-    //pre($_SESSION);
 
     if(isset($_POST['submit']))
     {
@@ -258,7 +257,123 @@
            
             <hr class="mb-4">
             <button class="btn btn-primary btn-lg btn-block" type="submit" name="submit" value="submit">Continue to Checkout</button>
-          </form>
-        </div>
-      </div>
-      
+            </form>
+    </div>
+</div>
+</html>
+
+<?php
+
+function validateForm($formData) {
+    $errors = [];
+
+    // Validate each form field
+    if (empty($formData['first_name'])) {
+        $errors[] = 'First Name is required';
+    }
+
+    if (empty($formData['last_name'])) {
+        $errors[] = 'Last Name is required';
+    }
+
+    if (empty($formData['email']) || !filter_var($formData['email'], FILTER_VALIDATE_EMAIL)) {
+        $errors[] = 'Please enter a valid email address';
+    }
+
+    if (empty($formData['address'])) {
+        $errors[] = 'Address is required';
+    }
+
+    if (empty($formData['country'])) {
+        $errors[] = 'Country is required';
+    }
+
+    if (empty($formData['state'])) {
+        $errors[] = 'State is required';
+    }
+
+    if (empty($formData['zipcode'])) {
+        $errors[] = 'Zip Code is required';
+    }
+
+    return $errors;
+}
+
+function insertOrder($db, $formData) {
+    $sql = 'INSERT INTO orders (first_name, last_name, email, address, address2, country, state, zipcode, order_status, created_at, updated_at)
+            VALUES (:fname, :lname, :email, :address, :address2, :country, :state, :zipcode, :order_status, :created_at, :updated_at)';
+    
+    $statement = $db->prepare($sql);
+
+    $params = [
+        'fname' => $formData['first_name'],
+        'lname' => $formData['last_name'],
+        'email' => $formData['email'],
+        'address' => $formData['address'],
+        'address2' => $formData['address2'],
+        'country' => $formData['country'],
+        'state' => $formData['state'],
+        'zipcode' => $formData['zipcode'],
+        'order_status' => 'confirmed',
+        'created_at' => date('Y-m-d H:i:s'),
+        'updated_at' => date('Y-m-d H:i:s')
+    ];
+
+    $statement->execute($params);
+
+    return ($statement->rowCount() == 1) ? $db->lastInsertId() : false;
+}
+
+function insertOrderDetails($db, $orderId, $cartItems) {
+  $sql = 'INSERT INTO order_details (order_id, product_id, product_name, product_price, qty, subtotal)
+          VALUES (:order_id, :product_id, :product_name, :product_price, :qty, :subtotal)';
+  
+  $statement = $db->prepare($sql);
+
+  foreach ($cartItems as $item) {
+      $params = [
+          'order_id' => $orderId,
+          'product_id' => $item['product_id'],
+          'product_name' => $item['name'],
+          'product_price' => $item['price'],
+          'qty' => $item['quantity'],
+          'subtotal' => $item['subtotal']
+      ];
+
+      $statement->execute($params);
+  }
+}
+
+
+function updateOrderSubtotal($db, $orderId) {
+    $sql = 'UPDATE orders SET subtotal = :total WHERE id = :id';
+
+    $statement = $db->prepare($sql);
+
+    $total = calculateTotal($db, $orderId);
+
+    $params = [
+        'total' => $total,
+        'id' => $orderId
+    ];
+
+    $statement->execute($params);
+}
+
+function calculateTotal($db, $orderId) {
+    $sql = 'SELECT SUM(subtotal) AS total FROM order_details WHERE order_id = :order_id';
+
+    $statement = $db->prepare($sql);
+
+    $params = [
+        'order_id' => $orderId
+    ];
+
+    $statement->execute($params);
+    $result = $statement->fetch(PDO::FETCH_ASSOC);
+
+    return ($result) ? $result['total'] : 0;
+}
+?>
+
+?>

@@ -9,39 +9,45 @@
 </head>
 
 <body>
-    <h1>Appointment Analytics</h1>
-
     <?php
-    // Include your database connection and existing PHP code here
-
-    // Retrieve analytics data
+    // Query for total appointments
     $stmtTotalAppointments = $con->prepare("SELECT COUNT(*) as total FROM appointments");
     $stmtTotalAppointments->execute();
     $totalAppointments = $stmtTotalAppointments->fetchColumn();
 
+    // Query for upcoming appointments
     $stmtUpcomingAppointments = $con->prepare("SELECT COUNT(*) as upcoming FROM appointments WHERE start_time >= ?");
     $stmtUpcomingAppointments->execute(array(date('Y-m-d H:i:s')));
     $upcomingAppointments = $stmtUpcomingAppointments->fetchColumn();
 
+    // Query for canceled appointments
     $stmtCanceledAppointments = $con->prepare("SELECT COUNT(*) as canceled FROM appointments WHERE canceled = 1");
     $stmtCanceledAppointments->execute();
     $canceledAppointments = $stmtCanceledAppointments->fetchColumn();
     ?>
 
-    <div style="width: 50%;">
-        <canvas id="appointmentChart"></canvas>
+    <div class="card shadow mb-4" style="width: 50%;">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Appointment Analytics</h6>
+        </div>
+        <div class="card-body">
+            <canvas id="appointmentChart"></canvas>
+        </div>
     </div>
 
     <script>
-        // Chart.js code
+        // PHP data to JavaScript array
+        var appointmentChartData = [<?php echo $totalAppointments; ?>, <?php echo $upcomingAppointments; ?>, <?php echo $canceledAppointments; ?>];
+
+        // Chart.js
         var ctx = document.getElementById('appointmentChart').getContext('2d');
-        var myChart = new Chart(ctx, {
+        var appointmentChart = new Chart(ctx, {
             type: 'bar',
             data: {
                 labels: ['Total Appointments', 'Upcoming Appointments', 'Canceled Appointments'],
                 datasets: [{
                     label: 'Number of Appointments',
-                    data: [<?php echo $totalAppointments; ?>, <?php echo $upcomingAppointments; ?>, <?php echo $canceledAppointments; ?>],
+                    data: appointmentChartData,
                     backgroundColor: [
                         'rgba(75, 192, 192, 0.2)',
                         'rgba(255, 99, 132, 0.2)',
