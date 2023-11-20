@@ -28,10 +28,8 @@
     </div>
 
     <script>
-        // PHP data to JavaScript array
         var usersChartData = <?php echo json_encode($rows_users_chart); ?>;
 
-        // Chart.js
         var ctx = document.getElementById('usersChart').getContext('2d');
         var usersChart = new Chart(ctx, {
             type: 'bar',
