@@ -18,5 +18,7 @@ Project User Manual:
 * Go to phpmyadmin and import the database using the sql file located in the project folder.
 * Open a new tab and insert the localhost URL which will display the homepage. http://localhost/6005CEM-Security-main/home.php
 * Admin Login Credentials: 
+
 Username – admin
+
 Password – 123456789
