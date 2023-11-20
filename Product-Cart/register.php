@@ -87,6 +87,10 @@ if (isset($_POST['register'])) {
                             <input type="password" class="form-control" name="password" id="password" placeholder="Password" oninput="checkPasswordStrength()" onclick="showPasswordRequirements()" required>
                             <br/><input type="checkbox" onclick="togglePasswordVisibility()"> Show Password
                             <div id="password-strength"></div>
+                            <br><br><label style="display: flex; align-items: center; padding-right: 5px;">
+                            <input type="checkbox" id="termsCheckbox" name="termsCheckbox" style="margin-right: 5px;">
+                            I agree to the&nbsp;<a href="../privacy-policy.pdf" target="_blank" style="text-align: center;">Privacy Policy</a>
+                            </label>
                         </div>
                     </fieldset>
                 </div>
@@ -115,9 +119,6 @@ if (isset($_POST['register'])) {
             <a href="login.php">Go back</a>
             <input class="btn btn-primary" type="submit" name="register" value="Register">
         </form>
-        <label><br><br> <input type="checkbox" id="termsCheckbox" name="termsCheckbox">
-                I agree to the <a href="../privacy-policy.pdf" target="_blank">Privacy Policy</a>           
-        </label>
     </div>
 </section>
 
@@ -210,11 +211,27 @@ if (isset($_POST['register'])) {
         function showPasswordRequirements() {
             var popup = document.getElementById("password-requirements-popup");
             popup.style.display = "block";
-            setTimeout(function () {
-                popup.style.display = "none";
-                resetRequirements();
-            }, 5000);
-        }
+
+        function hidePopup() {
+            popup.style.display = "none";
+            resetRequirements();
+            document.removeEventListener("click", hidePopup);
+            document.removeEventListener("keydown", hideOnEscape);
+            }
+
+        function hideOnEscape(event) {
+            if (event.key === "Escape") {
+            hidePopup();
+                }
+            }
+
+    // Add click event listener to hide the popup when clicked away
+    setTimeout(function() {
+        document.addEventListener("click", hidePopup);
+        document.addEventListener("keydown", hideOnEscape);
+    }, 0);
+}
+
 
         function resetRequirements() {
             document.getElementById('uppercase-req').style.textDecoration = 'none';
