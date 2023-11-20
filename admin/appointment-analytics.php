@@ -10,17 +10,14 @@
 
 <body>
     <?php
-    // Query for total appointments
     $stmtTotalAppointments = $con->prepare("SELECT COUNT(*) as total FROM appointments");
     $stmtTotalAppointments->execute();
     $totalAppointments = $stmtTotalAppointments->fetchColumn();
 
-    // Query for upcoming appointments
     $stmtUpcomingAppointments = $con->prepare("SELECT COUNT(*) as upcoming FROM appointments WHERE start_time >= ?");
     $stmtUpcomingAppointments->execute(array(date('Y-m-d H:i:s')));
     $upcomingAppointments = $stmtUpcomingAppointments->fetchColumn();
 
-    // Query for canceled appointments
     $stmtCanceledAppointments = $con->prepare("SELECT COUNT(*) as canceled FROM appointments WHERE canceled = 1");
     $stmtCanceledAppointments->execute();
     $canceledAppointments = $stmtCanceledAppointments->fetchColumn();
@@ -36,10 +33,8 @@
     </div>
 
     <script>
-        // PHP data to JavaScript array
         var appointmentChartData = [<?php echo $totalAppointments; ?>, <?php echo $upcomingAppointments; ?>, <?php echo $canceledAppointments; ?>];
 
-        // Chart.js
         var ctx = document.getElementById('appointmentChart').getContext('2d');
         var appointmentChart = new Chart(ctx, {
             type: 'bar',
