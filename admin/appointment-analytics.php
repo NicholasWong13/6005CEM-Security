@@ -10,12 +10,13 @@
 
 <body>
     <?php
+    // Assuming $con is defined and represents a valid database connection
     $stmtTotalAppointments = $con->prepare("SELECT COUNT(*) as total FROM appointments");
     $stmtTotalAppointments->execute();
     $totalAppointments = $stmtTotalAppointments->fetchColumn();
 
-    $stmtUpcomingAppointments = $con->prepare("SELECT COUNT(*) as upcoming FROM appointments WHERE start_time >= ?");
-    $stmtUpcomingAppointments->execute(array(date('Y-m-d H:i:s')));
+    $stmtUpcomingAppointments = $con->prepare("SELECT COUNT(*) as upcoming FROM appointments WHERE start_time >= :current_time");
+    $stmtUpcomingAppointments->execute(['current_time' => date('Y-m-d H:i:s')]);
     $upcomingAppointments = $stmtUpcomingAppointments->fetchColumn();
 
     $stmtCanceledAppointments = $con->prepare("SELECT COUNT(*) as canceled FROM appointments WHERE canceled = 1");
@@ -23,12 +24,12 @@
     $canceledAppointments = $stmtCanceledAppointments->fetchColumn();
     ?>
 
-    <div class="card shadow mb-4" style="width: 50%;">
+    <div class="card shadow mb-4" style="width: 70%;">
         <div class="card-header py-3">
             <h6 class="m-0 font-weight-bold text-primary">Appointment Analytics</h6>
         </div>
-        <div class="card-body">
-            <canvas id="appointmentChart"></canvas>
+        <div class="card-body" style="height: 400px;">
+            <canvas id="appointmentChart" style="width:100%; height:100%;"></canvas>
         </div>
     </div>
 
