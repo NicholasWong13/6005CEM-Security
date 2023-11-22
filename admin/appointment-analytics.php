@@ -39,7 +39,7 @@
         var appointmentChart = new Chart(ctx, {
             type: 'bar',
             data: {
-                labels: ['Total Appointments', 'Upcoming Appointments', 'Canceled Appointments'],
+                labels: ['Total Appointments', 'Upcoming Appointments', 'Cancelled Appointments'],
                 datasets: [{
                     label: 'Number of Appointments',
                     data: appointmentChartData,
